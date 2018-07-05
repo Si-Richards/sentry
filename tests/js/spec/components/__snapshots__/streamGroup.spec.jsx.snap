@@ -195,9 +195,8 @@ exports[`StreamGroup renders with anchors 1`] = `
     mx={2}
     w={80}
   >
-    <AssigneeSelector
+    <_default
       id="1337"
-      size={20}
     />
   </Box>
 </Group>
