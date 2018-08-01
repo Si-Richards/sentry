@@ -137,7 +137,7 @@ const AssigneeSelector = createReactClass({
     this.setState({loading: true});
   },
 
-  handleAssign({value: {type, assignee}}, e) {
+  handleAssign({value: {type, assignee}}, state, e) {
     if (type === 'member') {
       this.assignToUser(assignee);
     }
@@ -234,7 +234,9 @@ const AssigneeSelector = createReactClass({
 
     return (
       <div className={className}>
-        {loading && <LoadingIndicator mini style={{height: '24px', margin: 0}} />}
+        {loading && (
+          <LoadingIndicator mini style={{height: '24px', margin: 0, marginRight: 11}} />
+        )}
         {!loading && (
           <DropdownAutoComplete
             onOpen={e => {
@@ -288,7 +290,7 @@ const AssigneeSelector = createReactClass({
                   {assignedTo ? (
                     <ActorAvatar actor={assignedTo} className="avatar" size={24} />
                   ) : (
-                    <span className="icon-user" />
+                    <IconUser />
                   )}
                   <StyledChevron src="icon-chevron-down" />
                 </DropdownButton>
@@ -304,6 +306,8 @@ const AssigneeSelector = createReactClass({
 export default styled(AssigneeSelector)`
   display: flex;
   justify-content: flex-end;
+
+  /* stylelint-disable-next-line no-duplicate-selectors */
   ${StyledMenu} {
     right: -14px;
   }
@@ -312,6 +316,15 @@ export default styled(AssigneeSelector)`
 const getSvgStyle = () => `
   font-size: 16px;
   opacity: 0.3;
+`;
+
+const IconUser = styled(props => (
+  <div {...props}>
+    <span className="icon-user" />
+  </div>
+))`
+  width: 24px;
+  text-align: center;
 `;
 
 const IconContainer = styled.div`

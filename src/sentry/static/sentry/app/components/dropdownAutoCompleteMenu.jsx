@@ -331,10 +331,10 @@ const getMenuArrow = ({menuWithArrow, alignMenu}) => {
       display: block;
       position: absolute;
       top: -9px;
-      left: 11px;
+      left: 10px;
       z-index: -2;
       ${alignRight && 'left: auto;'};
-      ${alignRight && 'right: 11px;'};
+      ${alignRight && 'right: 10px;'};
     }
 
     &:after {
@@ -347,10 +347,10 @@ const getMenuArrow = ({menuWithArrow, alignMenu}) => {
       display: block;
       position: absolute;
       top: -8px;
-      left: 12px;
+      left: 11px;
       z-index: -1;
       ${alignRight && 'left: auto;'};
-      ${alignRight && 'right: 12px;'};
+      ${alignRight && 'right: 11px;'};
     }
   `;
 };
@@ -379,7 +379,7 @@ const StyledInput = styled(Input)`
     border-radius: 0;
     box-shadow: none;
     font-size: 13px;
-    padding: ${p => p.padding}
+    padding: ${p => p.padding};
     font-weight: normal;
     color: ${p => p.gray2};
   }
