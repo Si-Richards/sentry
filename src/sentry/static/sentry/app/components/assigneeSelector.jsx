@@ -22,7 +22,7 @@ import SentryTypes from 'app/sentryTypes';
 import TextOverflow from 'app/components/textOverflow';
 import space from 'app/styles/space';
 
-const AssigneeSelector = createReactClass({
+const AssigneeSelectorComponent = createReactClass({
   displayName: 'AssigneeSelector',
 
   propTypes: {
@@ -305,7 +305,7 @@ const AssigneeSelector = createReactClass({
   },
 });
 
-export default styled(AssigneeSelector)`
+const AssigneeSelector = styled(AssigneeSelectorComponent)`
   display: flex;
   justify-content: flex-end;
 
@@ -314,7 +314,9 @@ export default styled(AssigneeSelector)`
     right: -14px;
   }
 `;
-export {AssigneeSelector};
+
+export default AssigneeSelector
+export {AssigneeSelector: AssigneeSelectorComponent};
 
 const getSvgStyle = () => `
   font-size: 16px;
