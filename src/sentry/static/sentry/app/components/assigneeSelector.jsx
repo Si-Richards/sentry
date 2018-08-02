@@ -41,6 +41,8 @@ const AssigneeSelector = createReactClass({
   statics: {
     putSessionUserFirst(members) {
       // If session user is in the filtered list of members, put them at the top
+      if (!members) return [];
+
       let sessionUser = ConfigStore.get('user');
       let sessionUserIndex = members.findIndex(
         member => sessionUser && member.id === sessionUser.id
@@ -62,17 +64,19 @@ const AssigneeSelector = createReactClass({
 
   getInitialState() {
     let group = GroupStore.get(this.props.id);
+    let memberList = MemberListStore.loaded ? MemberListStore.getAll() : null;
+    let loading = GroupStore.hasStatus(this.props.id, 'assignTo');
+
     return {
       assignedTo: group && group.assignedTo,
-      memberList: MemberListStore.loaded ? MemberListStore.getAll() : null,
-      isOpen: false,
-      loading: false,
+      memberList,
+      loading,
     };
   },
 
   componentWillReceiveProps(nextProps) {
     let loading = GroupStore.hasStatus(nextProps.id, 'assignTo');
-    if (nextProps.id != this.props.id || loading != this.state.loading) {
+    if (nextProps.id !== this.props.id || loading !== this.state.loading) {
       let group = GroupStore.get(this.props.id);
       this.setState({
         loading,
@@ -82,10 +86,7 @@ const AssigneeSelector = createReactClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextState.isOpen !== this.state.isOpen ||
-      nextState.loading !== this.state.loading
-    ) {
+    if (nextState.loading !== this.state.loading) {
       return true;
     }
 
@@ -229,7 +230,7 @@ const AssigneeSelector = createReactClass({
 
   render() {
     let {className} = this.props;
-    let {loading, assignedTo} = this.state;
+    let {loading, assignedTo, memberList} = this.state;
     let canInvite = ConfigStore.get('invitesEnabled');
 
     return (
@@ -244,7 +245,8 @@ const AssigneeSelector = createReactClass({
               if (!e) return;
               e.stopPropagation();
             }}
-            items={this.renderNewDropdownItems()}
+            busy={memberList === null}
+            items={memberList !== null ? this.renderNewDropdownItems() : []}
             alignMenu="right"
             onSelect={this.handleAssign}
             itemPadding={`5px ${space(1)}`}
@@ -253,8 +255,8 @@ const AssigneeSelector = createReactClass({
             menuWithArrow
             menuHeader={
               assignedTo && (
-                <MenuItemWrapper
-                  className="clear-assignee"
+                <ClearAssignee
+                  data-test-id="clear-assignee"
                   disabled={!loading}
                   onClick={this.clearAssignTo}
                   py={0}
@@ -263,14 +265,14 @@ const AssigneeSelector = createReactClass({
                     <ClearAssigneeIcon />
                   </IconContainer>
                   <Label>{t('Clear Assignee')}</Label>
-                </MenuItemWrapper>
+                </ClearAssignee>
               )
             }
             menuFooter={
               canInvite && (
                 <Feature access={['org:write']}>
                   <MenuItemWrapper
-                    className="invite-member"
+                    data-test-id="invite-member"
                     disabled={!loading}
                     to={`/settings/${this.context.organization.slug}/members/new/`}
                     query={{referrer: 'assignee_selector'}}
@@ -312,6 +314,7 @@ export default styled(AssigneeSelector)`
     right: -14px;
   }
 `;
+export {AssigneeSelector};
 
 const getSvgStyle = () => `
   font-size: 16px;
@@ -347,6 +350,11 @@ const MenuItemWrapper = styled(({py, ...props}) => <div {...props} />)`
       padding-top: ${p.py};
       padding-bottom: ${p.py};
     `};
+`;
+
+const ClearAssignee = styled(MenuItemWrapper)`
+  background: rgba(52, 60, 69, 0.03);
+  border-bottom: 1px solid rgba(52, 60, 69, 0.06);
 `;
 
 const Label = styled(TextOverflow)`
